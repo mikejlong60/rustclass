@@ -1,0 +1,11 @@
+[package]
+name = "embed"
+version = "0.1.0"
+authors = ["mikejlong60 <mjlong@functionicity.com>"]
+
+[lib]
+name = "embed"
+crate-type = ["dylib"]
+
+[dependencies]
+time = "0.1"
