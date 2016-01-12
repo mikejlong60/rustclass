@@ -36,5 +36,24 @@ fn main() {
     }
 
 
+    //map is lazy too. won't do anything unless you use it.
+    let fred = (1..1000).take(200).map(|x| x + 12);
+    for x in fred {
+        println!("first 200 with 12 added:, {}",x);
+    }
+
+    //here is an infinite iterator
+    let fred2 = (1..).take(10).map(|x| x + 12);
+    for x in fred2 {
+        println!("first 10 of infinite iterator with 12 added:, {}",x);
+    }
+
+    //here is filter. takes a closure predicate.  still lazy so it won't print anything.
+    let fred3 = (1..).take(20).filter(|x| x % 2 == 0);
+
+    //you can use the & which actually retrieves the value from the reference.
+    for i in (1..).take(2000).filter(|&x| x % 13 == 0) {
+        println!("1, {}", i);
+    }
 
 }
