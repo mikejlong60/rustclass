@@ -1,7 +1,7 @@
 use std::thread;
 
 fn main() {
-    for x in 1 .. 100000 {
+    for x in 1 .. 10 {
     thread::spawn(||
         {
             println!("Hello, Julia, Chloe, Waverly, Maddie, and Denise!");
@@ -9,6 +9,10 @@ fn main() {
         }
     );
   }
+
+  use_channel();
+  use_channel2();
+  panic();
 }
 
 
@@ -38,4 +42,57 @@ fn safe_shared_data() {
         });
     }
     //thread::sleep_ms(50);
+}
+
+use std::sync::mpsc;
+
+fn use_channel() {
+    let data = Arc::new(Mutex::new(0));
+
+    let (tx,rx) = mpsc::channel();
+
+    for _ in 0 .. 10 {
+        let (data, tx) = (data.clone(), tx.clone());
+
+        thread::spawn(move || {
+            let mut data = data.lock().unwrap();
+            *data += 1;
+
+            tx.send(()).unwrap();
+        });
+    }
+
+    for _ in 0 .. 10 {
+        rx.recv().unwrap();
+    }
+}
+
+fn use_channel2() {
+    let (tx, rx) = mpsc::channel();
+
+    for i in 0 .. 10 {
+        let tx = tx.clone();
+
+        thread::spawn(move || {
+            let answer = i * i;
+
+            tx.send(answer).unwrap();
+
+        });
+    }
+
+    for _ in 0 .. 10 {
+        println!("{}", rx.recv().unwrap());
+
+    }
+}
+
+fn panic() {
+    let handle = thread::spawn(move || {
+        panic!("thread oops!");
+    });
+
+    let result = handle.join();
+
+    assert!(result.is_err());
 }
